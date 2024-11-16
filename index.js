@@ -1,12 +1,26 @@
 import express from "express";
 import axios from "axios";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(
+	cors({
+		origin: "http://localhost:3000",
+		methods: ["POST"],
+		credentials: true,
+	}),
+);
 
 app.post("/ai", async (req, res) => {
 	const { prompt } = req.body;
 	try {
+		res.writeHead(200, {
+			"Content-Type": "text/event-stream",
+			"Cache-Control": "no-cache",
+			Connection: "keep-alive",
+		});
+
 		const response = await axios.post(
 			"http://localhost:11434/api/generate",
 			{
@@ -20,19 +34,23 @@ app.post("/ai", async (req, res) => {
 		);
 
 		response.data.on("data", (data) => {
-			const chunk = data.toString();
-			console.log(chunk);
-			res.json({ chunk });
+			try {
+				const message = JSON.parse(data.toString());
+				console.log(message);
+				res.write(`data: ${JSON.stringify(message)}\n\n`);
+			} catch (error) {
+				console.log(`Error on parsing data: ${error}`);
+			}
 		});
 
 		response.data.on("end", () => {
 			res.end();
 		});
 
-		// response.data.on("error", (err) => {
-		// 	console.log(`Error on stream: ${err}`);
-		// 	res.status(500).send("Error on processing response...");
-		// });
+		response.data.on("error", (err) => {
+			console.log(`Error on stream: ${err}`);
+			res.status(500).send("Error on processing response...");
+		});
 	} catch (error) {
 		res.status(404).json({ error: error.message });
 	}
