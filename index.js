@@ -1,12 +1,12 @@
-import express from "express";
 import axios from "axios";
 import cors from "cors";
+import express from "express";
 
 const app = express();
 app.use(express.json());
 app.use(
 	cors({
-		origin: "http://localhost:3000",
+		origin: "*",
 		methods: ["POST"],
 		credentials: true,
 	}),
@@ -37,7 +37,7 @@ app.post("/ai", async (req, res) => {
 			try {
 				const message = JSON.parse(data.toString());
 				console.log(message);
-				res.write(`data: ${JSON.stringify(message)}\n\n`);
+				res.write(JSON.stringify(message));
 			} catch (error) {
 				console.log(`Error on parsing data: ${error}`);
 			}
