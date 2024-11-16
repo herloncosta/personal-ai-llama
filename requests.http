@@ -1,0 +1,6 @@
+POST http://localhost:3000/ai
+Content-Type: application/json
+
+{
+    "prompt": "Qual a capital do Brasil?"
+}
