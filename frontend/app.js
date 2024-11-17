@@ -1,16 +1,26 @@
 const app = document.getElementById('app')
 const promptInputEl = document.getElementById('prompt')
 const sendPromptButtonEl = document.querySelector('button')
+const API_URL = 'http://localhost:3001/ai'
 
-async function request(prompt) {
-    const response = await fetch('http://localhost:3001/ai', {
+async function sendPrompt(prompt) {
+    const payload = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt }),
-    })
+    }
+    const response = await fetch(API_URL, payload)
+    return response
+}
 
+function renderResponse(result) {
+    app.innerText = result
+}
+
+async function request(prompt) {
+    const response = await sendPrompt(prompt)
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
     }
