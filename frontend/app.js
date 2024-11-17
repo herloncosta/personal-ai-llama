@@ -15,10 +15,6 @@ async function sendPrompt(prompt) {
     return response
 }
 
-function renderResponse(result) {
-    app.innerText = result
-}
-
 async function request(prompt) {
     const response = await sendPrompt(prompt)
     if (!response.ok) {
