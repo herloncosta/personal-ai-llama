@@ -3,7 +3,7 @@ const promptInputEl = document.getElementById('prompt')
 const sendPromptButtonEl = document.querySelector('button')
 
 async function request(prompt) {
-    const response = await fetch('http://localhost:3000/ai', {
+    const response = await fetch('http://localhost:3001/ai', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -25,14 +25,13 @@ async function request(prompt) {
             break
         }
         buffer += decoder.decode(value)
+        const parseResponseToJson = parseStreamData(buffer)
+        let result = ''
+        for (const text of parseResponseToJson) {
+            result += text.response
+        }
+        app.innerText = result
     }
-
-    const parseResponseToJson = parseStreamData(buffer)
-    let result = ''
-    for (const text of parseResponseToJson) {
-        result += text.response
-    }
-    app.innerText = result
 }
 
 function parseStreamData(data) {
@@ -41,11 +40,11 @@ function parseStreamData(data) {
         console.error('Não foi possível encontrar objetos JSON na string')
         return
     }
-    const parsedObjects = jsonParts.map((part) => JSON.parse(part))
+    const parsedObjects = jsonParts.map(part => JSON.parse(part))
     return parsedObjects
 }
 
-sendPromptButtonEl.addEventListener('click', (event) => {
+sendPromptButtonEl.addEventListener('click', event => {
     event.preventDefault()
     app.innerText = 'Loading...'
     const prompt = promptInputEl.value

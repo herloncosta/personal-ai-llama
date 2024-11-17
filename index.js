@@ -3,6 +3,9 @@ import cors from 'cors'
 import express from 'express'
 
 const app = express()
+const API_URL = 'http://localhost:11434/api/generate'
+const PORT = 3001
+
 app.use(express.json())
 app.use(
     cors({
@@ -14,47 +17,32 @@ app.use(
 
 app.post('/ai', async (req, res) => {
     const { prompt } = req.body
+    const headers = {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+    }
+    const payload = {
+        model: 'llama3',
+        prompt,
+        stream: true,
+    }
     try {
-        res.writeHead(200, {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            Connection: 'keep-alive',
+        const response = await axios.post(API_URL, payload, {
+            responseType: 'stream',
         })
-
-        const response = await axios.post(
-            'http://localhost:11434/api/generate',
-            {
-                model: 'llama3',
-                prompt,
-                stream: true,
-            },
-            {
-                responseType: 'stream',
-            },
-        )
-
-        response.data.on('data', (data) => {
-            try {
-                const message = JSON.parse(data.toString())
-                res.write(JSON.stringify(message))
-            } catch (error) {
-                console.log(`Error on parsing data: ${error}`)
-            }
-        })
-
+        response.data.pipe(res)
         response.data.on('end', () => {
             res.end()
         })
-
-        response.data.on('error', (err) => {
-            console.log(`Error on stream: ${err}`)
-            res.status(500).send(err.message)
+        response.data.on('error', err => {
+            console.error('Erro no stream:', err)
+            res.status(500).send('Erro no stream')
         })
+        res.writeHead(200, headers)
     } catch (err) {
         res.status(404).json({ error: err.message })
     }
 })
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000')
-})
+app.listen(PORT, _ => console.log(`Server is running on port ${PORT}`))
