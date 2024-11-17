@@ -36,7 +36,6 @@ app.post('/ai', async (req, res) => {
         response.data.on('data', (data) => {
             try {
                 const message = JSON.parse(data.toString())
-                console.log(message)
                 res.write(JSON.stringify(message))
             } catch (error) {
                 console.log(`Error on parsing data: ${error}`)
@@ -49,10 +48,10 @@ app.post('/ai', async (req, res) => {
 
         response.data.on('error', (err) => {
             console.log(`Error on stream: ${err}`)
-            res.status(500).send('Error on processing response...')
+            res.status(500).send(err.message)
         })
-    } catch (error) {
-        res.status(404).json({ error: error.message })
+    } catch (err) {
+        res.status(404).json({ error: err.message })
     }
 })
 

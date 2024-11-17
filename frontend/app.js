@@ -2,7 +2,7 @@ const app = document.getElementById('app')
 const promptInputEl = document.getElementById('prompt')
 const sendPromptButtonEl = document.querySelector('button')
 
-const request = async (prompt) => {
+async function request(prompt) {
     const response = await fetch('http://localhost:3000/ai', {
         method: 'POST',
         headers: {
@@ -36,24 +36,17 @@ const request = async (prompt) => {
 }
 
 function parseStreamData(data) {
-    // Usar regex para separar os objetos JSON concatenados
     const jsonParts = data.match(/{[^{}]*}/g)
-
-    // Verifica se encontramos objetos JSON
     if (!jsonParts) {
         console.error('Não foi possível encontrar objetos JSON na string')
         return
     }
-
-    // Parse de cada parte para JSON
     const parsedObjects = jsonParts.map((part) => JSON.parse(part))
-
     return parsedObjects
 }
 
 sendPromptButtonEl.addEventListener('click', (event) => {
     event.preventDefault()
-
     app.innerText = 'Loading...'
     const prompt = promptInputEl.value
     request(prompt)
