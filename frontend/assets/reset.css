@@ -1,0 +1,71 @@
+/* Reset básico de CSS */
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    font-family: sans-serif;
+    line-height: 1.5;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+input,
+button,
+select,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    border: none;
+    background: transparent;
+}
+
+button {
+    cursor: pointer;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 0;
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+}
+
+legend {
+    display: none;
+}
+
+::selection {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #000;
+}
