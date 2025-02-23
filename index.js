@@ -16,7 +16,7 @@ app.use(
 )
 
 app.get('/health', (req, res) => {
-		res.send({200: 'ok'})
+    res.send({ 200: 'ok' })
 })
 
 app.post('/ai', async (req, res) => {
